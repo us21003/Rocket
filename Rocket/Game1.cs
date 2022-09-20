@@ -14,28 +14,44 @@ namespace Rocket {
         private SpriteFont myFont;
         private Texture2D gaveOver;
 
-        int spriteX;
-        int spriteY;
-        int moveX;
-        int moveY;
+        int spriteXRocket;
+        int spriteYRocket;
+        int spriteYRocketOnStartup;
+        int moveXRocket;
+        int moveYRocket;
         int numberOfSpaceRocks = 5;
+        int spriteYComet = 0;
+        int spriteXComet = 900;
         int points;
         int maxPoint;
         int[] rockMovesY;
         int[] spaceRockY;
-        Vector2 position;
+
+        bool gameIsRunning;
 
         #region Game1
         public Game1() {
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-            this._graphics.PreferredBackBufferWidth = 800;
-            this._graphics.PreferredBackBufferHeight = 525;
+            this._graphics.PreferredBackBufferWidth = 950;
+            this._graphics.PreferredBackBufferHeight = 650;
             this.IsMouseVisible = false;
             this.CreateRocks();
+            this.LoadOnRandomX();
+            this.MoveComets();
         }
         #endregion
         #region myMethods
+
+        #region LoadRandomPosition
+
+        private void LoadOnRandomX() {
+            Random r = new Random();
+            spriteYRocketOnStartup = r.Next(0, 625);
+        }
+
+        #endregion
+
         #region CreateRocks
         private void CreateRocks() {
             rockMovesY = new int[numberOfSpaceRocks];
@@ -47,9 +63,17 @@ namespace Rocket {
             }
         }
         #endregion
+
+        #region moveComets
+
+        private void MoveComets() {
+            Random r = new Random();
+            spriteYComet = r.Next(0, 600);
+        }
+
         #endregion
 
-
+        #endregion
 
         #region Initialize
         protected override void Initialize() {
@@ -78,54 +102,59 @@ namespace Rocket {
             KeyboardState keyboardState = Keyboard.GetState();
             Keys[] pressedKey = keyboardState.GetPressedKeys();
 
-            foreach(Keys key in pressedKey) {
-                if (key == Keys.Up) {
-                    moveY = -5;
-                    moveX = 0;
+            if (gameTime.TotalGameTime.Milliseconds == 0) {
+                spriteXComet-=50;
+            }
 
-                    spriteY = spriteY + moveY;
+            foreach (Keys key in pressedKey) {
+                if (key == Keys.Up) {
+                    moveYRocket = -5;
+                    moveXRocket = 0;
+
+                    spriteYRocket = spriteYRocket + moveYRocket;
                 }
 
                 if (key == Keys.Down) {
-                    moveY = 5;
-                    moveX = 0;
+                    moveYRocket = 5;
+                    moveXRocket = 0;
 
-                    spriteY = spriteY + moveY;
+                    spriteYRocket = spriteYRocket + moveYRocket;
                 }
 
-                if (key.Equals(Keys.Left)) {
-                    moveY = 0;
-                    moveX = -5;
+                if (key == Keys.Left) {
+                    moveYRocket = 0;
+                    moveXRocket = -5;
 
-                    spriteX = spriteX + moveX;
+                    spriteXRocket = spriteXRocket + moveXRocket;
                 }
 
-                if (key.Equals(Keys.Right)) {
-                    moveY = 0;
-                    moveX = 5;
+                if (key == Keys.Right) {
+                    moveYRocket = 0;
+                    moveXRocket = 5;
 
-                    spriteX = spriteX + moveX;
+                    spriteXRocket = spriteXRocket + moveXRocket;
+                }
+
+                if(key == Keys.Escape) {
+                    this.Exit();
                 }
 
             }
 
-            if(spriteX < 0) {
-                spriteX = 0;
+            if(spriteXRocket < 0) {
+                spriteXRocket = 0;
             }
 
-            if(spriteY < 0) {
-                spriteY = 0;
+            if(spriteYRocket < 0) {
+                spriteYRocket = 0;
             }
 
-            if (spriteX+moveX>_graphics.GraphicsDevice.Viewport.Width) {
-                spriteX = _graphics.GraphicsDevice.Viewport.Width-moveX;
+            if (spriteXRocket + moveXRocket > _graphics.GraphicsDevice.Viewport.Width) {
+                spriteXRocket = _graphics.GraphicsDevice.Viewport.Width - moveXRocket;
             }
-            if (spriteY + moveY > _graphics.GraphicsDevice.Viewport.Height) {
-                spriteY = _graphics.GraphicsDevice.Viewport.Height - moveY;
+            if (spriteYRocket + moveYRocket > _graphics.GraphicsDevice.Viewport.Height) {
+                spriteYRocket = _graphics.GraphicsDevice.Viewport.Height - moveYRocket;
             }
-
-            position.X = spriteX;
-            position.Y = spriteY;
 
             base.Update(gameTime);
         }
@@ -134,14 +163,25 @@ namespace Rocket {
         #region Draw
         protected override void Draw(GameTime gameTime) {
             GraphicsDevice.Clear(Color.CornflowerBlue);
+
             // TODO: Add your drawing code here
             _spriteBatch.Begin();
-            _spriteBatch.Draw(mySpace, new Rectangle(0,0,800,525), Color.White);
-            _spriteBatch.Draw(myRocket, new Rectangle(0, 0, 70, 40), Color.White);
-            _spriteBatch.Draw(mySpacialRock, new Rectangle(230, 150, 70, 40), Color.White);
+            _spriteBatch.Draw(mySpace, new Rectangle(0,0,950,650), Color.White);
+            
+            _spriteBatch.Draw(mySpacialRock, new Rectangle(spriteXComet, spriteYComet, 70, 40), Color.White);
+
+            if (!gameIsRunning) {
+                _spriteBatch.Draw(myRocket, new Rectangle(0, spriteYRocketOnStartup, 70, 40), Color.White);
+                gameIsRunning = true;
+            } else {
+                _spriteBatch.Draw(myRocket, new Rectangle(spriteXRocket, spriteYRocket, 70, 40), Color.White);
+            }
+                
+
             _spriteBatch.End();
             base.Draw(gameTime);
         }
         #endregion
+
     }
 }
