@@ -22,9 +22,6 @@ namespace Rocket {
         int numberOfSpaceRocks = 5;
         int spriteYComet = 0;
         int spriteXComet = 900;
-        int points;
-        int maxPoint;
-        int[] rockMovesY;
         int[] spaceRockY;
 
         bool gameIsRunning;
@@ -54,12 +51,13 @@ namespace Rocket {
 
         #region CreateRocks
         private void CreateRocks() {
-            rockMovesY = new int[numberOfSpaceRocks];
+            Random r = new Random();
+            //rockMovesY = new int[numberOfSpaceRocks];
             spaceRockY = new int[numberOfSpaceRocks];
 
             for(int x = 0; x < numberOfSpaceRocks; x++) {
-                rockMovesY[x] = 450;
-                spaceRockY[x] = 0;
+                //rockMovesY[x] = r.Next(0, 900);
+                spaceRockY[x] = r.Next(0, 650);
             }
         }
         #endregion
@@ -69,6 +67,10 @@ namespace Rocket {
         private void MoveComets() {
             Random r = new Random();
             spriteYComet = r.Next(0, 600);
+        }
+
+        private void RelocateComets() {
+            //
         }
 
         #endregion
@@ -108,14 +110,14 @@ namespace Rocket {
 
             foreach (Keys key in pressedKey) {
                 if (key == Keys.Up) {
-                    moveYRocket = -5;
+                    moveYRocket = -10;
                     moveXRocket = 0;
 
                     spriteYRocket = spriteYRocket + moveYRocket;
                 }
 
                 if (key == Keys.Down) {
-                    moveYRocket = 5;
+                    moveYRocket = 10;
                     moveXRocket = 0;
 
                     spriteYRocket = spriteYRocket + moveYRocket;
@@ -123,14 +125,14 @@ namespace Rocket {
 
                 if (key == Keys.Left) {
                     moveYRocket = 0;
-                    moveXRocket = -5;
+                    moveXRocket = -10;
 
                     spriteXRocket = spriteXRocket + moveXRocket;
                 }
 
                 if (key == Keys.Right) {
                     moveYRocket = 0;
-                    moveXRocket = 5;
+                    moveXRocket = 10;
 
                     spriteXRocket = spriteXRocket + moveXRocket;
                 }
@@ -149,11 +151,12 @@ namespace Rocket {
                 spriteYRocket = 0;
             }
 
+            //Prevent to go aoutside the screen
             if (spriteXRocket + moveXRocket > _graphics.GraphicsDevice.Viewport.Width) {
-                spriteXRocket = _graphics.GraphicsDevice.Viewport.Width - moveXRocket;
+                spriteXRocket = _graphics.GraphicsDevice.Viewport.Width - myRocket.Width;
             }
             if (spriteYRocket + moveYRocket > _graphics.GraphicsDevice.Viewport.Height) {
-                spriteYRocket = _graphics.GraphicsDevice.Viewport.Height - moveYRocket;
+                spriteYRocket = _graphics.GraphicsDevice.Viewport.Height - myRocket.Height;
             }
 
             base.Update(gameTime);
@@ -168,7 +171,9 @@ namespace Rocket {
             _spriteBatch.Begin();
             _spriteBatch.Draw(mySpace, new Rectangle(0,0,950,650), Color.White);
             
-            _spriteBatch.Draw(mySpacialRock, new Rectangle(spriteXComet, spriteYComet, 70, 40), Color.White);
+            for(int x = 0; x < numberOfSpaceRocks; x++) {
+                _spriteBatch.Draw(mySpacialRock, new Rectangle(spriteXComet, spaceRockY[x], 70, 40), Color.White);
+            }
 
             if (!gameIsRunning) {
                 _spriteBatch.Draw(myRocket, new Rectangle(0, spriteYRocketOnStartup, 70, 40), Color.White);
