@@ -44,7 +44,7 @@ namespace Rocket {
 
         private void LoadOnRandomX() {
             Random r = new Random();
-            spriteYRocketOnStartup = r.Next(0, 625);
+            spriteYRocketOnStartup = r.Next(0, 615);
         }
 
         #endregion
@@ -152,11 +152,11 @@ namespace Rocket {
             }
 
             //Prevent to go aoutside the screen
-            if (spriteXRocket + moveXRocket > _graphics.GraphicsDevice.Viewport.Width) {
-                spriteXRocket = _graphics.GraphicsDevice.Viewport.Width - myRocket.Width;
+            if (spriteXRocket + moveXRocket > 300) {
+                spriteXRocket = 300;
             }
-            if (spriteYRocket + moveYRocket > _graphics.GraphicsDevice.Viewport.Height) {
-                spriteYRocket = _graphics.GraphicsDevice.Viewport.Height - myRocket.Height;
+            if (spriteYRocket + moveYRocket > 610) {
+                spriteYRocket = 610;
             }
 
             base.Update(gameTime);
@@ -174,14 +174,8 @@ namespace Rocket {
             for(int x = 0; x < numberOfSpaceRocks; x++) {
                 _spriteBatch.Draw(mySpacialRock, new Rectangle(spriteXComet, spaceRockY[x], 70, 40), Color.White);
             }
+            _spriteBatch.Draw(myRocket, new Rectangle(spriteXRocket, spriteYRocket, 70, 40), Color.White);
 
-            if (!gameIsRunning) {
-                _spriteBatch.Draw(myRocket, new Rectangle(0, spriteYRocketOnStartup, 70, 40), Color.White);
-                gameIsRunning = true;
-            } else {
-                _spriteBatch.Draw(myRocket, new Rectangle(spriteXRocket, spriteYRocket, 70, 40), Color.White);
-            }
-                
 
             _spriteBatch.End();
             base.Draw(gameTime);
