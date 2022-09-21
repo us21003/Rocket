@@ -7,10 +7,13 @@ namespace Rocket {
     public class Game1 : Game {
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
-        private Texture2D myRocket; //cohete
+        private Texture2D myRocketLeft; //cohete
+        private Texture2D myRocketRight;
+        private Texture2D myRocketUp;
+        private Texture2D myRocketDown;
         private Texture2D mySpace; //Background
         private Texture2D mySpacialRock; //cometa
-        private Texture2D myDyamond;
+        private Texture2D myDiamond;
         private SpriteFont myFont;
         private Texture2D gaveOver;
 
@@ -25,10 +28,12 @@ namespace Rocket {
         int spriteYComet = 0;
         int spriteXComet = 900;
         int level = 0;
-        int dyamondX;
-        int dyamondY;
+        int diamondX;
+        int diamondY;
+        int spriteRocketAddress = 2;//0=Arriba,1=Abajo,2=Izquierda,3=Derecha
         int[] spaceRockX;
         int[] spaceRockY;
+
 
         #region Game1
         public Game1() {
@@ -56,8 +61,8 @@ namespace Rocket {
         #region LoadDyamond
 
         private void LoadDyamond() {
-            dyamondX = r.Next(700, 900);
-            dyamondY = r.Next(0, 625);
+            diamondX = r.Next(0, 900);
+            diamondY = r.Next(0, 625);
         }
 
         #endregion
@@ -96,11 +101,14 @@ namespace Rocket {
         #region LoadContent
         protected override void LoadContent() {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
-            myRocket = Content.Load<Texture2D>("rocket2");
+            myRocketUp = Content.Load<Texture2D>("rocket0");
+            myRocketDown = Content.Load<Texture2D>("rocket1");
+            myRocketLeft = Content.Load<Texture2D>("rocket2");
+            myRocketRight = Content.Load<Texture2D>("rocket3");
             mySpace = Content.Load<Texture2D>("space");
             myFont = Content.Load<SpriteFont>("myFont");
             mySpacialRock = Content.Load<Texture2D>("spaceRock2");
-            myDyamond = Content.Load<Texture2D>("dyamond");
+            myDiamond = Content.Load<Texture2D>("dyamond");
             // TODO: use this.Content to load your game content here
         }
         #endregion
@@ -132,6 +140,7 @@ namespace Rocket {
                     moveXRocket = 0;
 
                     spriteYRocket = spriteYRocket + moveYRocket;
+                    spriteRocketAddress = 0;
                 }
 
                 if (key == Keys.Down) {
@@ -139,6 +148,7 @@ namespace Rocket {
                     moveXRocket = 0;
 
                     spriteYRocket = spriteYRocket + moveYRocket;
+                    spriteRocketAddress = 1;
                 }
 
                 if (key == Keys.Left) {
@@ -146,6 +156,7 @@ namespace Rocket {
                     moveXRocket = -5;
 
                     spriteXRocket = spriteXRocket + moveXRocket;
+                    spriteRocketAddress = 2;
                 }
 
                 if (key == Keys.Right) {
@@ -153,6 +164,7 @@ namespace Rocket {
                     moveXRocket = 5;
 
                     spriteXRocket = spriteXRocket + moveXRocket;
+                    spriteRocketAddress = 3;
                 }
 
                 if(key == Keys.Escape) {
@@ -169,8 +181,8 @@ namespace Rocket {
             }
 
             //Prevent to go aoutside the screen
-            if (spriteXRocket + moveXRocket < 700) {
-                spriteXRocket = 700;
+            if (spriteXRocket + moveXRocket > 860) {
+                spriteXRocket = 860;
             }
             if (spriteYRocket + moveYRocket > 610) {
                 spriteYRocket = 610;
@@ -187,12 +199,26 @@ namespace Rocket {
             // TODO: Add your drawing code here
             _spriteBatch.Begin();
             _spriteBatch.Draw(mySpace, new Rectangle(0,0,950,650), Color.White);
-            _spriteBatch.Draw(myDyamond, new Rectangle(dyamondX, dyamondY, 50, 50), Color.White);
+            _spriteBatch.Draw(myDiamond, new Rectangle(diamondX, diamondY, 50, 50), Color.White);
 
             for (int i = 0; i < numberOfSpaceRocks; i++) {
                 _spriteBatch.Draw(mySpacialRock, new Rectangle(spaceRockX[i] - spriteXComet, spaceRockY[i], 70, 40), Color.White);
             }
-            _spriteBatch.Draw(myRocket, new Rectangle(spriteXRocket, spriteYRocket, 70, 40), Color.White);
+
+            switch (spriteRocketAddress) {
+                case 0:
+                    _spriteBatch.Draw(myRocketUp, new Rectangle(spriteXRocket, spriteYRocket, 40, 70), Color.White);
+                    break;
+                case 1:
+                    _spriteBatch.Draw(myRocketDown, new Rectangle(spriteXRocket, spriteYRocket, 40, 70), Color.White);
+                    break;
+                case 2:
+                    _spriteBatch.Draw(myRocketLeft, new Rectangle(spriteXRocket, spriteYRocket, 70, 40), Color.White);
+                    break;
+                case 3:
+                    _spriteBatch.Draw(myRocketRight, new Rectangle(spriteXRocket, spriteYRocket, 70, 40), Color.White);
+                    break;
+            }
 
             _spriteBatch.End();
             base.Draw(gameTime);
