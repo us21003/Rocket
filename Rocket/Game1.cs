@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.SymbolStore;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -11,20 +10,25 @@ namespace Rocket {
         private Texture2D myRocket; //cohete
         private Texture2D mySpace; //Background
         private Texture2D mySpacialRock; //cometa
+        private Texture2D myDyamond;
         private SpriteFont myFont;
         private Texture2D gaveOver;
+
+        Random r = new Random();
 
         int spriteXRocket;
         int spriteYRocket;
         int spriteYRocketOnStartup;
         int moveXRocket;
         int moveYRocket;
-        int numberOfSpaceRocks = 5;
+        int numberOfSpaceRocks = 12;
         int spriteYComet = 0;
         int spriteXComet = 900;
+        int level = 0;
+        int dyamondX;
+        int dyamondY;
+        int[] spaceRockX;
         int[] spaceRockY;
-
-        bool gameIsRunning;
 
         #region Game1
         public Game1() {
@@ -36,6 +40,7 @@ namespace Rocket {
             this.CreateRocks();
             this.LoadOnRandomX();
             this.MoveComets();
+            this.LoadDyamond();
         }
         #endregion
         #region myMethods
@@ -43,21 +48,29 @@ namespace Rocket {
         #region LoadRandomPosition
 
         private void LoadOnRandomX() {
-            Random r = new Random();
             spriteYRocketOnStartup = r.Next(0, 615);
+        }
+
+        #endregion
+
+        #region LoadDyamond
+
+        private void LoadDyamond() {
+            dyamondX = r.Next(700, 900);
+            dyamondY = r.Next(0, 625);
         }
 
         #endregion
 
         #region CreateRocks
         private void CreateRocks() {
-            Random r = new Random();
             //rockMovesY = new int[numberOfSpaceRocks];
+            spaceRockX = new int[numberOfSpaceRocks];
             spaceRockY = new int[numberOfSpaceRocks];
 
             for(int x = 0; x < numberOfSpaceRocks; x++) {
-                //rockMovesY[x] = r.Next(0, 900);
-                spaceRockY[x] = r.Next(0, 650);
+                spaceRockX[x] = r.Next(800, 900);
+                spaceRockY[x] = r.Next(0, 625);
             }
         }
         #endregion
@@ -65,12 +78,7 @@ namespace Rocket {
         #region moveComets
 
         private void MoveComets() {
-            Random r = new Random();
-            spriteYComet = r.Next(0, 600);
-        }
-
-        private void RelocateComets() {
-            //
+            spriteYComet = r.Next(0, 615);
         }
 
         #endregion
@@ -88,10 +96,11 @@ namespace Rocket {
         #region LoadContent
         protected override void LoadContent() {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
-            myRocket = Content.Load<Texture2D>("rocket");
+            myRocket = Content.Load<Texture2D>("rocket2");
             mySpace = Content.Load<Texture2D>("space");
             myFont = Content.Load<SpriteFont>("myFont");
-            mySpacialRock = Content.Load<Texture2D>("spaceRock");
+            mySpacialRock = Content.Load<Texture2D>("spaceRock2");
+            myDyamond = Content.Load<Texture2D>("dyamond");
             // TODO: use this.Content to load your game content here
         }
         #endregion
@@ -106,18 +115,27 @@ namespace Rocket {
 
             if (gameTime.TotalGameTime.Milliseconds == 0) {
                 spriteXComet-=50;
+
+                //Movimiento infinito: una vez fuera de la pantalla, vuelven a aparecer.
+                if(spriteXComet < 0) {
+                    spriteXComet = 900;
+                    for(int x = 0; x < numberOfSpaceRocks; x++) {
+                        spaceRockX[x] = r.Next(700, 900);
+                        spaceRockY[x] = r.Next(0, 625);
+                    }
+                }
             }
 
             foreach (Keys key in pressedKey) {
                 if (key == Keys.Up) {
-                    moveYRocket = -10;
+                    moveYRocket = -5;
                     moveXRocket = 0;
 
                     spriteYRocket = spriteYRocket + moveYRocket;
                 }
 
                 if (key == Keys.Down) {
-                    moveYRocket = 10;
+                    moveYRocket = 5;
                     moveXRocket = 0;
 
                     spriteYRocket = spriteYRocket + moveYRocket;
@@ -125,14 +143,14 @@ namespace Rocket {
 
                 if (key == Keys.Left) {
                     moveYRocket = 0;
-                    moveXRocket = -10;
+                    moveXRocket = -5;
 
                     spriteXRocket = spriteXRocket + moveXRocket;
                 }
 
                 if (key == Keys.Right) {
                     moveYRocket = 0;
-                    moveXRocket = 10;
+                    moveXRocket = 5;
 
                     spriteXRocket = spriteXRocket + moveXRocket;
                 }
@@ -140,11 +158,10 @@ namespace Rocket {
                 if(key == Keys.Escape) {
                     this.Exit();
                 }
-
             }
 
-            if(spriteXRocket < 0) {
-                spriteXRocket = 0;
+            if(spriteXRocket > 875) {
+                spriteXRocket = 875;
             }
 
             if(spriteYRocket < 0) {
@@ -152,8 +169,8 @@ namespace Rocket {
             }
 
             //Prevent to go aoutside the screen
-            if (spriteXRocket + moveXRocket > 300) {
-                spriteXRocket = 300;
+            if (spriteXRocket + moveXRocket < 700) {
+                spriteXRocket = 700;
             }
             if (spriteYRocket + moveYRocket > 610) {
                 spriteYRocket = 610;
@@ -170,12 +187,12 @@ namespace Rocket {
             // TODO: Add your drawing code here
             _spriteBatch.Begin();
             _spriteBatch.Draw(mySpace, new Rectangle(0,0,950,650), Color.White);
-            
-            for(int x = 0; x < numberOfSpaceRocks; x++) {
-                _spriteBatch.Draw(mySpacialRock, new Rectangle(spriteXComet, spaceRockY[x], 70, 40), Color.White);
+            _spriteBatch.Draw(myDyamond, new Rectangle(dyamondX, dyamondY, 50, 50), Color.White);
+
+            for (int i = 0; i < numberOfSpaceRocks; i++) {
+                _spriteBatch.Draw(mySpacialRock, new Rectangle(spaceRockX[i] - spriteXComet, spaceRockY[i], 70, 40), Color.White);
             }
             _spriteBatch.Draw(myRocket, new Rectangle(spriteXRocket, spriteYRocket, 70, 40), Color.White);
-
 
             _spriteBatch.End();
             base.Draw(gameTime);

@@ -27,3 +27,6 @@ C:\Users\alexu\OneDrive\Documentos\Universidad\Ciclo 4\Estructura de datos\Compu
 C:\Users\alexu\OneDrive\Documentos\Universidad\Ciclo 4\Estructura de datos\Computo 1\TareaEvaluada\Rocket\Rocket\obj\Debug\net6.0\Rocket.genruntimeconfig.cache
 C:\Users\alexu\OneDrive\Documentos\Universidad\Ciclo 4\Estructura de datos\Computo 1\TareaEvaluada\Rocket\Rocket\obj\Debug\net6.0\ref\Rocket.dll
 C:\Users\alexu\OneDrive\Documentos\Universidad\Ciclo 4\Estructura de datos\Computo 1\TareaEvaluada\Rocket\Rocket\bin\Debug\net6.0\Content\spaceRock.xnb
+C:\Users\alexu\OneDrive\Documentos\Universidad\Ciclo 4\Estructura de datos\Computo 1\TareaEvaluada\Rocket\Rocket\bin\Debug\net6.0\Content\rocket2.xnb
+C:\Users\alexu\OneDrive\Documentos\Universidad\Ciclo 4\Estructura de datos\Computo 1\TareaEvaluada\Rocket\Rocket\bin\Debug\net6.0\Content\spaceRock2.xnb
+C:\Users\alexu\OneDrive\Documentos\Universidad\Ciclo 4\Estructura de datos\Computo 1\TareaEvaluada\Rocket\Rocket\bin\Debug\net6.0\Content\dyamond.xnb
