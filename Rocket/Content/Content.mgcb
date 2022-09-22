@@ -49,6 +49,18 @@
 /processorParam:TextureFormat=Color
 /build:../images/rocket1.png;rocket1.png
 
+#begin collision.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:collision.png
+
 #begin dyamond.png
 /importer:TextureImporter
 /processor:TextureProcessor

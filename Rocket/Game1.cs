@@ -14,26 +14,32 @@ namespace Rocket {
         private Texture2D mySpace; //Background
         private Texture2D mySpacialRock; //cometa
         private Texture2D myDiamond;
+        private Texture2D collision;
         private SpriteFont myFont;
         private Texture2D gaveOver;
 
         Random r = new Random();
+        Rectangle[] cometPosition;
+        Rectangle rocketPosition;
+        Rectangle diamondPosition;
 
         int spriteXRocket;
         int spriteYRocket;
-        int spriteYRocketOnStartup;
         int moveXRocket;
         int moveYRocket;
-        int numberOfSpaceRocks = 12;
+        int numberOfSpaceRocks = 15;
         int spriteYComet = 0;
         int spriteXComet = 900;
-        int level = 0;
         int diamondX;
         int diamondY;
         int spriteRocketAddress = 2;//0=Arriba,1=Abajo,2=Izquierda,3=Derecha
+        int points = 0;
+        int collisionX = 0;
+        int collisionY = 0;
         int[] spaceRockX;
         int[] spaceRockY;
 
+        bool hasCrashed = false;
 
         #region Game1
         public Game1() {
@@ -43,26 +49,32 @@ namespace Rocket {
             this._graphics.PreferredBackBufferHeight = 650;
             this.IsMouseVisible = false;
             this.CreateRocks();
-            this.LoadOnRandomX();
             this.MoveComets();
-            this.LoadDyamond();
+            this.LoadDiamond();
         }
         #endregion
         #region myMethods
 
-        #region LoadRandomPosition
+        #region LoadDyamond
 
-        private void LoadOnRandomX() {
-            spriteYRocketOnStartup = r.Next(0, 615);
+        private void LoadDiamond() {
+            diamondX = r.Next(0, 900);
+            diamondY = r.Next(0, 625);
+
+            diamondPosition = new Rectangle(diamondX, diamondY, 50, 50);
         }
 
         #endregion
 
-        #region LoadDyamond
+        #region CreateRectangles
 
-        private void LoadDyamond() {
-            diamondX = r.Next(0, 900);
-            diamondY = r.Next(0, 625);
+        private void CreateRectangles(int positionX, int positionY) {
+            cometPosition = new Rectangle[numberOfSpaceRocks];
+            
+            for(int x = 0; x < numberOfSpaceRocks; x++) {
+                cometPosition[x] = new Rectangle(positionX, positionY, 70, 40);
+                this.RocketHasCrashed(cometPosition);
+            }
         }
 
         #endregion
@@ -73,11 +85,34 @@ namespace Rocket {
             spaceRockX = new int[numberOfSpaceRocks];
             spaceRockY = new int[numberOfSpaceRocks];
 
-            for(int x = 0; x < numberOfSpaceRocks; x++) {
-                spaceRockX[x] = r.Next(800, 900);
-                spaceRockY[x] = r.Next(0, 625);
+            for(int i = 0; i < numberOfSpaceRocks; i++) {
+                spaceRockX[i] = r.Next(800, 900);
+                spaceRockY[i] = r.Next(0, 625);
+
+                CreateRectangles(spaceRockX[i], spaceRockY[i]);
             }
         }
+        #endregion
+
+        #region hasCrashed
+
+        private void RocketHasCrashed(Rectangle[] cometPosition) {
+            for(int x = 0; x < numberOfSpaceRocks; x++) {
+                if (rocketPosition.Intersects(cometPosition[x])) {
+                    hasCrashed = true;
+                    collisionX = cometPosition[x].X;
+                    collisionY = cometPosition[x].Y;
+                }
+            }
+        }
+
+        private void RocketHasTheDiamond(Rectangle rocketPosition) {
+            if (rocketPosition.Intersects(diamondPosition)) {
+                points++;
+                this.LoadDiamond();
+            }
+        }
+
         #endregion
 
         #region moveComets
@@ -109,6 +144,7 @@ namespace Rocket {
             myFont = Content.Load<SpriteFont>("myFont");
             mySpacialRock = Content.Load<Texture2D>("spaceRock2");
             myDiamond = Content.Load<Texture2D>("dyamond");
+            collision = Content.Load<Texture2D>("collision");
             // TODO: use this.Content to load your game content here
         }
         #endregion
@@ -128,7 +164,7 @@ namespace Rocket {
                 if(spriteXComet < 0) {
                     spriteXComet = 900;
                     for(int x = 0; x < numberOfSpaceRocks; x++) {
-                        spaceRockX[x] = r.Next(700, 900);
+                        spaceRockX[x] = r.Next(450, 900);
                         spaceRockY[x] = r.Next(0, 625);
                     }
                 }
@@ -172,8 +208,8 @@ namespace Rocket {
                 }
             }
 
-            if(spriteXRocket > 875) {
-                spriteXRocket = 875;
+            if(spriteXRocket < 0) {
+                spriteXRocket = 0;
             }
 
             if(spriteYRocket < 0) {
@@ -184,8 +220,8 @@ namespace Rocket {
             if (spriteXRocket + moveXRocket > 860) {
                 spriteXRocket = 860;
             }
-            if (spriteYRocket + moveYRocket > 610) {
-                spriteYRocket = 610;
+            if (spriteYRocket + moveYRocket > 600) {
+                spriteYRocket = 600;
             }
 
             base.Update(gameTime);
@@ -205,19 +241,32 @@ namespace Rocket {
                 _spriteBatch.Draw(mySpacialRock, new Rectangle(spaceRockX[i] - spriteXComet, spaceRockY[i], 70, 40), Color.White);
             }
 
-            switch (spriteRocketAddress) {
-                case 0:
-                    _spriteBatch.Draw(myRocketUp, new Rectangle(spriteXRocket, spriteYRocket, 40, 70), Color.White);
-                    break;
-                case 1:
-                    _spriteBatch.Draw(myRocketDown, new Rectangle(spriteXRocket, spriteYRocket, 40, 70), Color.White);
-                    break;
-                case 2:
-                    _spriteBatch.Draw(myRocketLeft, new Rectangle(spriteXRocket, spriteYRocket, 70, 40), Color.White);
-                    break;
-                case 3:
-                    _spriteBatch.Draw(myRocketRight, new Rectangle(spriteXRocket, spriteYRocket, 70, 40), Color.White);
-                    break;
+            for(int x = 0; x < numberOfSpaceRocks; x++) {
+                switch (spriteRocketAddress) {
+                    case 0:
+                        _spriteBatch.Draw(myRocketUp, new Rectangle(900 - spriteXRocket, spriteYRocket, 40, 70), Color.White);
+                        rocketPosition = new Rectangle(spriteXRocket, spriteYRocket, myRocketUp.Width, myRocketUp.Height);
+                        break;
+                    case 1:
+                        _spriteBatch.Draw(myRocketDown, new Rectangle(spriteXRocket, spriteYRocket, 40, 70), Color.White);
+                        rocketPosition = new Rectangle(spriteXRocket, 325 + spriteYRocket, myRocketUp.Width, myRocketUp.Height);
+                        break;
+                    case 2:
+                        _spriteBatch.Draw(myRocketLeft, new Rectangle(spriteXRocket, spriteYRocket, 70, 40), Color.White);
+                        rocketPosition = new Rectangle(spriteXRocket, 325 + spriteYRocket, myRocketUp.Width, myRocketUp.Height);
+                        break;
+                    case 3:
+                        _spriteBatch.Draw(myRocketRight, new Rectangle(spriteXRocket, spriteYRocket, 70, 40), Color.White);
+                        rocketPosition = new Rectangle(spriteXRocket, 325 + spriteYRocket, myRocketUp.Width, myRocketUp.Height);
+                        break;
+                }
+                this.RocketHasTheDiamond(rocketPosition);
+
+                if (hasCrashed) {
+                    _spriteBatch.Draw(collision, new Rectangle(collisionX, collisionY,100,100), Color.White);
+                    _spriteBatch.DrawString(myFont, "Game over\nPoints earned: " + points, new Vector2(_graphics.PreferredBackBufferWidth/2, _graphics.PreferredBackBufferHeight/2) ,Color.White);
+                    this.Exit();
+                }
             }
 
             _spriteBatch.End();

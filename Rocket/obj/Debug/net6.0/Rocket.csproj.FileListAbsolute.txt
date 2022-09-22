@@ -33,3 +33,4 @@ C:\Users\alexu\OneDrive\Documentos\Universidad\Ciclo 4\Estructura de datos\Compu
 C:\Users\alexu\OneDrive\Documentos\Universidad\Ciclo 4\Estructura de datos\Computo 1\TareaEvaluada\Rocket\Rocket\bin\Debug\net6.0\Content\rocket0.xnb
 C:\Users\alexu\OneDrive\Documentos\Universidad\Ciclo 4\Estructura de datos\Computo 1\TareaEvaluada\Rocket\Rocket\bin\Debug\net6.0\Content\rocket1.xnb
 C:\Users\alexu\OneDrive\Documentos\Universidad\Ciclo 4\Estructura de datos\Computo 1\TareaEvaluada\Rocket\Rocket\bin\Debug\net6.0\Content\rocket3.xnb
+C:\Users\alexu\OneDrive\Documentos\Universidad\Ciclo 4\Estructura de datos\Computo 1\TareaEvaluada\Rocket\Rocket\bin\Debug\net6.0\Content\collision.xnb
