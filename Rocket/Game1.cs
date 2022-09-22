@@ -73,7 +73,7 @@ namespace Rocket {
             
             for(int x = 0; x < numberOfSpaceRocks; x++) {
                 cometPosition[x] = new Rectangle(positionX, positionY, 70, 40);
-                this.RocketHasCrashed(cometPosition);
+                this.RocketHasCrashed(cometPosition, positionX, positionY);
             }
         }
 
@@ -96,12 +96,12 @@ namespace Rocket {
 
         #region hasCrashed
 
-        private void RocketHasCrashed(Rectangle[] cometPosition) {
+        private void RocketHasCrashed(Rectangle[] cometPosition, int positionX, int positionY) {
             for(int x = 0; x < numberOfSpaceRocks; x++) {
                 if (rocketPosition.Intersects(cometPosition[x])) {
                     hasCrashed = true;
-                    collisionX = cometPosition[x].X;
-                    collisionY = cometPosition[x].Y;
+                    collisionX = positionX;
+                    collisionY = positionY;
                 }
             }
         }
@@ -263,7 +263,8 @@ namespace Rocket {
                 this.RocketHasTheDiamond(rocketPosition);
 
                 if (hasCrashed) {
-                    _spriteBatch.Draw(collision, new Rectangle(collisionX, collisionY,100,100), Color.White);
+                    System.Threading.Thread.Sleep(5000);
+                    _spriteBatch.Draw(collision, new Rectangle(collisionX, collisionY, 100, 100), Color.White);
                     _spriteBatch.DrawString(myFont, "Game over\nPoints earned: " + points, new Vector2(_graphics.PreferredBackBufferWidth/2, _graphics.PreferredBackBufferHeight/2) ,Color.White);
                     this.Exit();
                 }
